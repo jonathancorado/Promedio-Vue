@@ -12,9 +12,9 @@
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
   <style>
-    /* Fondo con patrón hexagonal */
+    /* ==== FONDO ==== */
     body {
-      background: radial-gradient(circle at top, #0b0c10, #0a0a0f);
+      background: radial-gradient(circle at top, #0d1117, #0a0a0f);
       background-image: repeating-linear-gradient(120deg, rgba(0,255,255,0.05) 1px, transparent 2px);
       background-size: 40px 40px;
       min-height: 100vh;
@@ -22,19 +22,34 @@
       align-items: center;
       justify-content: center;
       font-family: "Poppins", sans-serif;
+      overflow: hidden;
     }
 
-    /* Tarjeta con brillo */
+    /* Animación del brillo en el fondo */
+    @keyframes pulse-bg {
+      0% { box-shadow: 0 0 20px rgba(0,255,255,0.2); }
+      50% { box-shadow: 0 0 40px rgba(0,255,255,0.4); }
+      100% { box-shadow: 0 0 20px rgba(0,255,255,0.2); }
+    }
+
+    /* ==== TARJETA ==== */
     .card-calculadora {
-      background: rgba(15, 17, 25, 0.95);
+      background: rgba(20, 25, 35, 0.95);
       border-radius: 20px;
       box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
       color: #ffffff;
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
       padding: 2rem;
+      animation: pulse-bg 3s infinite ease-in-out;
+      transition: transform 0.3s ease;
     }
 
+    .card-calculadora:hover {
+      transform: scale(1.02);
+    }
+
+    /* ==== TITULO ==== */
     h2 {
       text-align: center;
       margin-bottom: 1.5rem;
@@ -43,6 +58,7 @@
       text-shadow: 0 0 10px rgba(0,255,255,0.3);
     }
 
+    /* ==== CAMPOS ==== */
     label {
       font-weight: 600;
       color: #bde0ff;
@@ -53,6 +69,7 @@
       border: 1px solid rgba(0,255,255,0.3);
       color: #00e5ff;
       border-radius: 10px;
+      transition: all 0.3s ease;
     }
 
     .form-control::placeholder {
@@ -65,6 +82,7 @@
       border-color: #00ffff;
     }
 
+    /* ==== BOTON ==== */
     .btn-calcular {
       background: linear-gradient(90deg, #00c6ff, #00ffcc);
       border: none;
@@ -73,11 +91,22 @@
       font-weight: 600;
       transition: all 0.3s;
       width: 100%;
+      box-shadow: 0 0 10px rgba(0,255,255,0.3);
     }
 
     .btn-calcular:hover {
-      transform: scale(1.03);
-      box-shadow: 0 0 15px rgba(0,255,255,0.5);
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(0,255,255,0.5);
+    }
+
+    /* ==== RESULTADO ==== */
+    .fade-in {
+      animation: fadeIn 1s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
     }
 
     .alert {
@@ -115,8 +144,11 @@
 
       <button class="btn btn-calcular mt-3" @click="calcularPromedio">Calcular Promedio</button>
 
-      <div v-if="promedio !== null" class="alert mt-4" :class="colorResultado">
-        Promedio Final: {{ promedio.toFixed(2) }}
+      <div v-if="promedio !== null" class="mt-4 fade-in">
+        <div class="alert" :class="colorResultado">
+          Promedio Final: {{ promedio.toFixed(2) }} <br>
+          <small>{{ mensajeResultado }}</small>
+        </div>
       </div>
     </div>
   </div>
@@ -137,6 +169,10 @@
         colorResultado() {
           if (this.promedio === null) return '';
           return this.promedio >= 6 ? 'alert-success' : 'alert-danger';
+        },
+        mensajeResultado() {
+          if (this.promedio === null) return '';
+          return this.promedio >= 6 ? '¡Felicidades! Has aprobado 🎉' : 'No alcanzaste la nota mínima 😔';
         }
       },
       methods: {
